@@ -16,6 +16,7 @@ img_len = 768 # width/height of input image
 img_size = (img_len, img_len)
 img_dims = [3] + list(img_size)
 depth_len = img_len // 4 # width/height of depth maps
+size = depth_len
 depth_downscale = 8 # to which factor depth maps are downsampled by unshuffling
 depth_channels = depth_downscale ** 2 # channels per pixel after unshuffling
 map_len = img_len // 32 # feature map width/height (dependent on feature extractor!)
@@ -51,7 +52,6 @@ norm_mean, norm_std = [0.485, 0.456, 0.406], [0.229, 0.224, 0.225]
 clamp = 1.9 # clamping parameter
 n_coupling_blocks = 4 # higher = more flexible = more unstable
 channels_hidden_teacher = 64 # number of neurons in hidden layers of internal networks
-channels_hidden_student = 1024 # number of neurons in hidden layers of student
 use_gamma = True
 kernel_sizes = [3] * (n_coupling_blocks - 1) + [5]
 pos_enc = True # use positional encoding
@@ -67,6 +67,7 @@ batch_size = 16
 eval_batch_size = 16
 
 epochs = 200
+train_epoch = 50
 
 # output settings
 verbose = True

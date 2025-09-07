@@ -102,45 +102,8 @@ class F_conv_attention(nn.Module):
         return out
 
 
-class F_conv(nn.Module):
-    '''ResNet transformation, not itself reversible, just used below'''
-
-    def __init__(self, in_channels, channels, channels_hidden=c.channels_hidden_teacher,
-                 kernel_size=3, leaky_slope=0.1,
-                 batch_norm=False):
-        super(F_conv, self).__init__()
-
-        if not channels_hidden:
-            channels_hidden = channels
-
-        pad = kernel_size // 2
-        pad_mode = ['zeros', 'replicate'][1]
-        self.leaky_slope = leaky_slope
-        self.gamma = nn.Parameter(torch.zeros(1))
-
-        self.conv1 = nn.Conv2d(in_channels, channels_hidden,
-                               kernel_size=kernel_size, padding=pad, padding_mode=pad_mode,
-                               bias=not batch_norm)
-        self.conv2 = nn.Conv2d(channels_hidden, channels,
-                               kernel_size=kernel_size, padding=pad, padding_mode=pad_mode,
-                               bias=not batch_norm)
-        self.relu = nn.ReLU(inplace=False)
-        self.se = SEAttention(channels_hidden)
-
-    def forward(self, x):
-        out = self.conv1(x)
-        out = self.se(out)
-        out = self.relu(out)
-        out = self.conv2(out)
-
-        if c.use_gamma:
-            out = out * self.gamma
-            return out
-        return out
-
-
 class glow_coupling_layer_cond(nn.Module):
-    def __init__(self, dims_in, F_class=F_conv, F_args={},
+    def __init__(self, dims_in, F_class=F_conv_attention, F_args={},
                  clamp=5., cond_dim=0, cat_dim=1, split_len=None):
         super(glow_coupling_layer_cond, self).__init__()
         channels = dims_in[0][0]

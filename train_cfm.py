@@ -1,15 +1,10 @@
 import random
 
-import numpy as np
-import torch
-from os.path import join
 from sklearn.metrics import roc_auc_score
 from tqdm import tqdm
-import datetime
-from model_dual_1 import *
+from model_dual import *
 from utils import *
 import config as c1
-from scipy.ndimage import gaussian_filter
 from point_faeture_extractor import point_extractor
 from clcloss import *
 
@@ -25,7 +20,7 @@ def seed_everything(seed):
     torch.backends.cudnn.benchmark = False
 
 def train(train_loader, test_loader, scale):
-    model_d = FeatureProjectionSup(inchannel=1152, outchannel=608)
+    model_d = FeatureProjectionConv(inchannel=1152, outchannel=608)
     model_d.to(c1.device)
     optimizer_d = torch.optim.Adam(params = model_d.parameters(), lr=1e-3, eps=1e-08, weight_decay=1e-5)
     lr_schedule = torch.optim.lr_scheduler.StepLR(optimizer_d, step_size=15, gamma=0.9)
